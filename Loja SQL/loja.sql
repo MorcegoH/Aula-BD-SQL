@@ -64,3 +64,55 @@ update carrinho set quantidade=2 where sku=6;
 -- Delete - ATENÇÃO!! Não esquece do comando WHERE. Usar sempre o ID para evitar problemas.
 delete from carrinho where sku=6;
 delete from carrinho where sku=2;
+
+-- CRIAÇÃO TABELA ESTOQUE
+create table estoque (
+		codigo int primary key auto_increment,
+        barcode varchar(50) unique,
+        nome varchar(100) not null,
+        fabricante varchar(100) not null,
+        -- ### Comando abaixo refere-se a data e hora automaticos ###
+        datacad timestamp default current_timestamp,
+        -- ### date é tipo de dados relacionados a data no formato YYYYMMDD ###
+        dataval date not null,
+        quantidade int not null,
+        estoquemin int not null,
+        medida varchar(50) not null,
+        valor decimal(10,2),
+        loc varchar(100)
+);
+	
+describe estoque;
+    
+insert into  estoque(nome,fabricante,dataval,quantidade,estoquemin,medida,valor,loc) values ('caneta bic vermelho','BIC',20221005,100,10,'CX',28.75,'setor A p2');
+insert into estoque(nome,fabricante,dataval,quantidade,estoquemin,medida,valor,loc) values ('bota de couro','Dafit',20231005,150,5,'CX',192.70,'setor B  A5');
+insert into estoque(nome,fabricante,dataval,quantidade,estoquemin,medida,valor,loc) values ('chaveiro','suice',20251005,13,10,'CX',52.90,'setor C A2');
+insert into estoque(nome,fabricante,dataval,quantidade,estoquemin,medida,valor,loc) values ('carne','JBS',20191007,152,8,'PCT',179.90,'setor A p6');
+insert into estoque(nome,fabricante,dataval,quantidade,estoquemin,medida,valor,loc) values ('requeijão cheetos','Elma Chips',20201007,100,52,'PCT',9.90,'setor D p6');
+insert into estoque(nome,fabricante,dataval,quantidade,estoquemin,medida,valor,loc) values ('cerveja','skol',20201127,10,25,'LT',4.90,'setor c A6');
+insert into estoque(nome,fabricante,dataval,quantidade,estoquemin,medida,valor,loc) values ('vodka','russia',20211006,1,20,'GF',39.90,'setor A E9');
+select * from estoque;
+
+-- Inventario de Estoque (Total)
+select sum(valor * quantidade) as total from estoque;
+
+-- Relatorio de reposição do estoque
+select * from estoque where quantidade < estoquemin;
+
+-- Relatorio de reposição do estoque 2 
+-- date_format() -> fomatar a exibição da data
+-- %d = dia %m = mês %y = ano (2 digitos) %Y = ano (4 digitos)
+select codigo as código, nome, 
+date_format(dataval,'%d/%m/%y') as data_validade,
+quantidade, estoquemin as estoque_minimo from estoque where quantidade < estoquemin;
+
+-- Relatório de produtos vencidos 1
+select codigo,nome,date_format(dataval,'%d/%m/%y') as data_validade from estoque;
+
+-- Relatório de validaden dos produtos 2
+-- curdate() = data atual
+select codigo as codigo, nome,date_format(dataval,'%d/%m/%y') as data_validade, datediff(dataval,curdate()) as dias_restantes from estoque;
+
+-- ATIVIDADE 3 INDIVIDUAL
+
+
