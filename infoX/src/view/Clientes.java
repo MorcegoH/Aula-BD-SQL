@@ -389,7 +389,7 @@ public class Clientes extends JDialog {
 			txtFoneCli.requestFocus();
 		
 		} else {
-			String create = "insert into clientes(nome,cep,endereco,numero,complemento,bairro,uf,fone,cidade) values (?,?,?,?,?,?,?,?,?)";
+			String create = "insert into clientes(nome,cep,endereco,numero,complemento,bairro,uf,fone,email,cidade) values (?,?,?,?,?,?,?,?,?,?)";
 			try {
 				Connection con = dao.conectar();
 				PreparedStatement pst = con.prepareStatement(create);
@@ -401,7 +401,8 @@ public class Clientes extends JDialog {
 				pst.setString(6, txtBairro.getText());
 				pst.setString(7, cboUf.getSelectedItem().toString());
 				pst.setString(8, txtFoneCli.getText());
-				pst.setString(9, txtCidade.getText());
+				pst.setString(9, txtEmailCli.getText());
+				pst.setString(10, txtCidade.getText());
 
 				int confirma = pst.executeUpdate();
 				if (confirma == 1) {
@@ -410,6 +411,12 @@ public class Clientes extends JDialog {
 				}
 				con.close();
 				limpar();
+			} catch (java.sql.SQLIntegrityConstraintViolationException ex) {
+				JOptionPane.showMessageDialog(null, "E-mail já cadastrado!\n Favor escolher outro e-mail para cadastrar!", "Mensagem",
+						JOptionPane.WARNING_MESSAGE);
+				txtEmailCli.setText(null);
+				txtEmailCli.requestFocus();
+			
 			} catch (Exception e) {
 				System.out.println(e);
 			}
@@ -425,18 +432,18 @@ public class Clientes extends JDialog {
 		txtNumero.setText(table.getModel().getValueAt(setar, 4).toString());
 		txtComplemento.setText(table.getModel().getValueAt(setar, 5).toString());
 		txtBairro.setText(table.getModel().getValueAt(setar, 6).toString());
-		cboUf.setSelectedItem(table.getModel().getValueAt(setar, 7).toString());	
+		cboUf.setSelectedItem(table.getModel().getValueAt(setar, 7).toString());
 		txtFoneCli.setText(table.getModel().getValueAt(setar, 8).toString());
 		txtEmailCli.setText(table.getModel().getValueAt(setar, 9).toString());
 		txtCidade.setText(table.getModel().getValueAt(setar, 10).toString());
-		
+
 		// Geren Btn
 		btnAdicionar.setEnabled(false);
 		btnEditar.setEnabled(true);
 		btnExcluir.setEnabled(true);
-		
-		
+
 	}
+
 	private void limpar()
 
 	{
@@ -455,7 +462,7 @@ public class Clientes extends JDialog {
 
 		// Limpar a tabela
 		((DefaultTableModel) table.getModel()).setRowCount(0);
-		//geren btn
+		// geren btn
 		btnAdicionar.setEnabled(true);
 		btnEditar.setEnabled(false);
 		btnExcluir.setEnabled(false);
