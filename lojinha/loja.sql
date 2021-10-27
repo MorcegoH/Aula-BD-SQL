@@ -15,6 +15,8 @@ create table clientes(
     senha varchar(250) not null
     );
     
+    alter table clientes drop column cidade;
+    
     insert into clientes (nome,email,senha) values
     ('Mikhael Santos','mikah.sanchez@git.io',md5('123456'));
      insert into clientes (nome,email,senha) values
@@ -33,6 +35,7 @@ create table clientes(
     select * from clientes where nome like "a%";
     select idcli as ID, nome as cliente, email as Email, senha as Senha from clientes where nome like "a%";
     
+    select senha from clientes where idcli=1;
    -- buscar biblioteca rs2xml.jar Angels and Demons
     
     create table produtos (
