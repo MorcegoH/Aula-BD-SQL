@@ -42,21 +42,27 @@ complemento varchar(30),
 bairro varchar(50) not null,
 uf char(2) not null,
 fone varchar(15) not null,
-email varchar(100)
+email varchar(100) 
 );
 
-insert into clientes(nome,cep,endereco,numero,complemento,bairro,uf,fone,email) 
-values ('Ana','08665480','Rua dos Bobos','0','casa 2','lapa','SP','11989885655','ana.tg@email.io');
-insert into clientes(nome,cep,endereco,numero,complemento,bairro,uf,fone,email) 
-values ('Amanda','08665475','Rua dos Campeoes','5','casa 1','tatuape','SP','11989887788','amanda.t1@email.io');
-insert into clientes(nome,cep,endereco,numero,complemento,bairro,uf,fone,email) 
-values ('Alexandre','08665596','Rua dos Oliofantes ','115','fundos','grajau','SP','11989889988','americo@email.io');
+alter table clientes modify email varchar(100) unique;
+delete from clientes where idcli=14;
+select * from clientes;
+
+insert into clientes(nome,cep,endereco,numero,complemento,bairro,uf,fone,email,cidade) 
+values ('Ana','08665480','Rua dos Bobos','0','casa 2','lapa','SP','11989885655','ana.tg@email.io','suzano');
+insert into clientes(nome,cep,endereco,numero,complemento,bairro,uf,fone,email,cidade) 
+values ('Amanda','08665475','Rua dos Campeoes','5','casa 1','tatuape','SP','11989887788','amanda.t1@email.io','mogi');
+insert into clientes(nome,cep,endereco,numero,complemento,bairro,uf,fone,email,cidade) 
+values ('Alexandre','08665596','Rua dos Oliofantes ','115','fundos','grajau','SP','11989889988','americo@email.io','ferraz');
 insert into clientes(nome,cep,endereco,numero,complemento,bairro,uf,fone,email) 
 values ('Soraia','08667789','Rua dos Ornintorrinco','79','Ap 7 Bl 5','Suzano','SP','11989998563','sora@email.io');
 insert into clientes(nome,cep,endereco,numero,complemento,bairro,uf,fone,email) 
-values ('Maria','08666789','Rua das Segundas','9','Serie C','casa do atlético','MG','11989882222','filhodoluxa@email.io');
+values ('Mathias','08666777','Rua das Terças','18','Serie 10','Casa do Palestra','SP','11989882555','socome@email.io');
 
 select * from clientes;
+ select idcli as ID, nome as Cliente, cep as Cep, endereco as Endereço, numero as Nº, complemento as Complemento,
+ bairro as Bairro, uf as UF, fone as Fone, email as Email from clientes where nome like "a%";
 
 -- TABELA OS
 --  Foreign key (FK) cria um relacionamento de  para muitos (cliente - tbos)
