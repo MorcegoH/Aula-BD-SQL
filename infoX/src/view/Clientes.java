@@ -202,12 +202,22 @@ public class Clientes extends JDialog {
 		getContentPane().add(btnAdicionar);
 
 		btnEditar = new JButton("");
+		btnEditar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				editarCliente();
+			}
+		});
 		btnEditar.setEnabled(false);
 		btnEditar.setIcon(new ImageIcon(Clientes.class.getResource("/img/update.png")));
 		btnEditar.setBounds(523, 341, 64, 64);
 		getContentPane().add(btnEditar);
 
 		btnExcluir = new JButton("");
+		btnExcluir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				excluirCliente();
+			}
+		});
 		btnExcluir.setEnabled(false);
 		btnExcluir.setIcon(new ImageIcon(Clientes.class.getResource("/img/delete.png")));
 		btnExcluir.setBounds(607, 341, 64, 64);
@@ -387,7 +397,7 @@ public class Clientes extends JDialog {
 		} else if (txtFoneCli.getText().isEmpty()) {
 			JOptionPane.showMessageDialog(null, "Preencha o Telefone!", "Atenção!!", JOptionPane.ERROR_MESSAGE);
 			txtFoneCli.requestFocus();
-		
+
 		} else {
 			String create = "insert into clientes(nome,cep,endereco,numero,complemento,bairro,uf,fone,email,cidade) values (?,?,?,?,?,?,?,?,?,?)";
 			try {
@@ -412,11 +422,12 @@ public class Clientes extends JDialog {
 				con.close();
 				limpar();
 			} catch (java.sql.SQLIntegrityConstraintViolationException ex) {
-				JOptionPane.showMessageDialog(null, "E-mail já cadastrado!\n Favor escolher outro e-mail para cadastrar!", "Mensagem",
+				JOptionPane.showMessageDialog(null,
+						"E-mail já cadastrado!\n Favor escolher outro e-mail para cadastrar!", "Mensagem",
 						JOptionPane.WARNING_MESSAGE);
 				txtEmailCli.setText(null);
 				txtEmailCli.requestFocus();
-			
+
 			} catch (Exception e) {
 				System.out.println(e);
 			}
@@ -444,6 +455,102 @@ public class Clientes extends JDialog {
 
 	}
 
+	private void editarCliente() {
+
+		if (txtNomeCli.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Preencha o Nome!", "Atenção!!", JOptionPane.ERROR_MESSAGE);
+			txtNomeCli.requestFocus();
+		} else if (txtCep.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Preencha o Endereço Completo!", "Atenção!!",
+					JOptionPane.ERROR_MESSAGE);
+			txtCep.requestFocus();
+		} else if (txtEndereco.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Preencha a Endereço Completo!", "Atenção!!",
+					JOptionPane.ERROR_MESSAGE);
+			txtEndereco.requestFocus();
+		} else if (txtComplemento.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Preencha a Endereço Completo!", "Atenção!!",
+					JOptionPane.ERROR_MESSAGE);
+			txtComplemento.requestFocus();
+		} else if (txtBairro.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Preencha a Endereço Completo!", "Atenção!!",
+					JOptionPane.ERROR_MESSAGE);
+			txtBairro.requestFocus();
+		} else if (txtCidade.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Preencha a Endereço Completo!", "Atenção!!",
+					JOptionPane.ERROR_MESSAGE);
+			txtCidade.requestFocus();
+		} else if (txtFoneCli.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Preencha o Telefone!", "Atenção!!", JOptionPane.ERROR_MESSAGE);
+			txtFoneCli.requestFocus();
+
+		} else {
+			String update = "update clientes set nome=?,cep=?,endereco=?,numero=?,complemento=?,bairro=?,uf=?,fone=?,email=?,cidade=? where idcli=?";
+			try {
+				Connection con = dao.conectar();
+				PreparedStatement pst = con.prepareStatement(update);
+				pst.setString(1, txtNomeCli.getText());
+				pst.setString(2, txtCep.getText());
+				pst.setString(3, txtEndereco.getText());
+				pst.setString(4, txtNumero.getText());
+				pst.setString(5, txtComplemento.getText());
+				pst.setString(6, txtBairro.getText());
+				pst.setString(7, cboUf.getSelectedItem().toString());
+				pst.setString(8, txtFoneCli.getText());
+				pst.setString(9, txtEmailCli.getText());
+				pst.setString(10, txtCidade.getText());
+				pst.setString(11, txtIdCli.getText());
+
+				int confirma = pst.executeUpdate();
+				if (confirma == 1) {
+					JOptionPane.showMessageDialog(null, "Dados do Cliente Atualizado com Sucesso!!", "Mensagem",
+							JOptionPane.INFORMATION_MESSAGE);
+				}
+				con.close();
+				limpar();
+			} catch (java.sql.SQLIntegrityConstraintViolationException ex) {
+				JOptionPane.showMessageDialog(null,
+						"E-mail já cadastrado!\n Favor escolher outro e-mail para cadastrar!", "Mensagem",
+						JOptionPane.WARNING_MESSAGE);
+				txtEmailCli.setText(null);
+				txtEmailCli.requestFocus();
+
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+	}
+	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+	private void excluirCliente() {
+		// Confirmação de Exclusão
+		int confirma = JOptionPane.showConfirmDialog(null, "Confirma a exclusão deste cliente?", "Atenção!",
+				JOptionPane.YES_NO_OPTION);
+		if (confirma == JOptionPane.YES_OPTION) {
+			// codigo principal
+			String delete = "delete from clientes where idcli=?";
+			try {
+				Connection con = dao.conectar();
+				PreparedStatement pst = con.prepareStatement(delete);
+				pst.setString(1, txtIdCli.getText());
+				int excluir = pst.executeUpdate();
+				if (excluir == 1) {
+					limpar();
+					JOptionPane.showMessageDialog(null, "Cliente excluído com sucesso!", "Mensagem",
+							JOptionPane.INFORMATION_MESSAGE);
+				}
+
+				con.close();
+			} catch (java.sql.SQLIntegrityConstraintViolationException ex) {
+				JOptionPane.showMessageDialog(null, "Exclusão Negada. \nCliente Serviço pedido em aberto.");
+
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+	}
+
+	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 	private void limpar()
 
 	{
