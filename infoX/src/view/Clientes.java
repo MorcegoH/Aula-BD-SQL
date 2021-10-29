@@ -382,10 +382,10 @@ public class Clientes extends JDialog {
 			JOptionPane.showMessageDialog(null, "Preencha a Endereço Completo!", "Atenção!!",
 					JOptionPane.ERROR_MESSAGE);
 			txtEndereco.requestFocus();
-		} else if (txtComplemento.getText().isEmpty()) {
-			JOptionPane.showMessageDialog(null, "Preencha a Endereço Completo!", "Atenção!!",
-					JOptionPane.ERROR_MESSAGE);
-			txtComplemento.requestFocus();
+		//} else if (txtComplemento.getText().isEmpty()) {
+			//JOptionPane.showMessageDialog(null, "Preencha a Endereço Completo!", "Atenção!!",
+					//JOptionPane.ERROR_MESSAGE);
+			//txtComplemento.requestFocus();
 		} else if (txtBairro.getText().isEmpty()) {
 			JOptionPane.showMessageDialog(null, "Preencha a Endereço Completo!", "Atenção!!",
 					JOptionPane.ERROR_MESSAGE);
