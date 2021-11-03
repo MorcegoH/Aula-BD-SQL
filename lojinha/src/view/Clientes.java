@@ -132,6 +132,11 @@ public class Clientes extends JDialog {
 		getContentPane().add(btnSalvar);
 
 		btnEditar = new JButton("");
+		btnEditar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				editarCliente();
+			}
+		});
 		btnEditar.setEnabled(false);
 		btnEditar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnEditar.setIcon(new ImageIcon(Clientes.class.getResource("/icones/editar.png")));
@@ -139,6 +144,11 @@ public class Clientes extends JDialog {
 		getContentPane().add(btnEditar);
 
 		btnExcluir = new JButton("");
+		btnExcluir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				excluirCliente();
+			}
+		});
 		btnExcluir.setEnabled(false);
 		btnExcluir.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnExcluir.setIcon(new ImageIcon(Clientes.class.getResource("/icones/excluir.png")));
@@ -242,7 +252,8 @@ public class Clientes extends JDialog {
 				limpar();
 				// o catch abaixo se refere ao valor duplicado no e-mail(UNIQUE)
 			} catch (java.sql.SQLIntegrityConstraintViolationException ex) {
-				JOptionPane.showMessageDialog(null, "E-mail já cadastrado!\n Favor escolher outro e-mail para cadastrar!", "Mensagem",
+				JOptionPane.showMessageDialog(null,
+						"E-mail já cadastrado!\n Favor escolher outro e-mail para cadastrar!", "Mensagem",
 						JOptionPane.WARNING_MESSAGE);
 				txtEmail.setText(null);
 				txtEmail.requestFocus();
@@ -299,6 +310,87 @@ public class Clientes extends JDialog {
 		}
 	}
 
+	/**
+	 * Modo resposnsavel pela edição dos dados do cliente
+	 */
+	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	private void editarCliente() {
+
+		// validação de campos obrigatorios
+		if (txtNome.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Preencha o Nome!", "Atenção!!", JOptionPane.ERROR_MESSAGE);
+			txtNome.requestFocus();
+		} else if (txtEmail.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Preencha o E-mail!", "Atenção!!", JOptionPane.ERROR_MESSAGE);
+			txtEmail.requestFocus();
+		} else if (txtSenha.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Preencha a Senha!", "Atenção!!", JOptionPane.ERROR_MESSAGE);
+			txtSenha.requestFocus();
+		} else {
+			// Editar os dados do cliente no banco
+			String update = "update clientes set nome=?,email=?,senha=md5(?) where idcli=?";
+			
+			try {
+				// Abrir conexão com o banco
+				Connection con = dao.conectar();
+				PreparedStatement pst = con.prepareStatement(update);
+				pst.setString(1, txtNome.getText());
+				pst.setString(2, txtEmail.getText());
+				pst.setString(3, txtSenha.getText());
+				pst.setString(4, txtId.getText());
+				// Criando uma variavel que irá executar a query e receber o valor 1 em caso
+				// positivo (edição do cliente do banco)
+				int confirma = pst.executeUpdate();
+				if (confirma == 1) {
+					JOptionPane.showMessageDialog(null, "Dados do Cliente Atualizados com Sucesso!!", "Mensagem",
+							JOptionPane.INFORMATION_MESSAGE);
+				}
+				con.close();
+				limpar();
+				// o catch abaixo se refere ao valor duplicado no e-mail(UNIQUE)
+			} catch (java.sql.SQLIntegrityConstraintViolationException ex) {
+				JOptionPane.showMessageDialog(null,
+						"E-mail já cadastrado!\n Favor escolher outro e-mail para cadastrar!", "Mensagem",
+						JOptionPane.WARNING_MESSAGE);
+				txtEmail.setText(null);
+				txtEmail.requestFocus();
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+	}
+	//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	
+	private void excluirCliente() {
+		//Confirmação de Exclusão
+		int confirma = JOptionPane.showConfirmDialog(null, "Confirma a exclusão deste cliente?", "Atenção!", JOptionPane.YES_NO_OPTION);
+		if (confirma == JOptionPane.YES_OPTION) {
+			//codigo principal
+			String delete="delete from clientes where idcli=?";
+			try {
+					Connection con=dao.conectar();
+					PreparedStatement pst = con.prepareStatement(delete);
+					pst.setString(1, txtId.getText());
+					int excluir = pst.executeUpdate();
+					if (excluir == 1) {
+						limpar();
+						JOptionPane.showMessageDialog(null, "Cliente excluído com sucesso!", "Mensagem", JOptionPane.INFORMATION_MESSAGE);	
+					}
+					
+					con.close();
+			}catch (java.sql.SQLIntegrityConstraintViolationException ex) {
+				JOptionPane.showMessageDialog(null, "Exclusão Negada. \nCliente possui pedido em aberto.");
+				
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+	}
+
+	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	/**
+	 * Metodo usado para limpar os campos e gerenciar os botões
+	 */
 	// Limpar os campos
 	private void limpar() {
 		txtPesquisar.setText(null);
