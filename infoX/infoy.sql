@@ -23,8 +23,8 @@ insert into usuarios(usuario,login,senha,perfil) values
 
 -- selecionando o usuario e sua respectiva senha (tela de login)
 select * from usuarios where login='admin' and senha=md5('123456');
-select * from usuarios where id=1;
-update usuarios set usuario='Ailton Kratos Aerum',
+select * from usuarios;
+update usuarios set usuario='Ana Paula',
 login='ailtongow',senha=md5('1234'), perfil='operador' where id=2;
 
 
