@@ -24,14 +24,17 @@ insert into usuarios(usuario,login,senha,perfil) values
 -- selecionando o usuario e sua respectiva senha (tela de login)
 select * from usuarios where login='admin' and senha=md5('123456');
 select * from usuarios;
-update usuarios set usuario='Ana Paula',
-login='ailtongow',senha=md5('1234'), perfil='operador' where id=2;
+update usuarios set usuario='Heder Santos',
+login='admin',senha=md5('123456'), perfil='administrador' where id=1;
 
 
 delete from usuarios where id=3;
 
 select * from usuarios;
 -- char (tipo de dados que aceita uma String de caracteres não variáveis)
+
+
+ 
 create table clientes(
 idcli int primary key auto_increment,
 nome varchar(50) not null,
@@ -93,7 +96,9 @@ insert into tbos(tipo,statusos,equipamento,defeito,tecnico,valor,idcli) values
 insert into tbos(tipo,statusos,equipamento,defeito,tecnico,valor,idcli) values
 ('serviço','em concerto','Notebook Acer Aspire VX','Tela Preta','Morcego','4500',2);
 
+update tbos set tipo='orçamento',statusos='bancada',equipamento='Celular xbx',defeito='Não Inicia',tecnico='Flavio',valor='720' where idcli=2;
 select * from tbos;
+select * from tbos where os=3;
 
 -- (inner join) união de tabelas relacionadas para consultas e updates
 -- Relatório 1
