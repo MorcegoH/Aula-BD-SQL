@@ -19,6 +19,8 @@ import java.awt.Cursor;
 public class Principal extends JFrame {
 
 	private JPanel contentPane;
+	public JButton btnUsuarios;
+	public JLabel btnRelatorios;
 
 	/**
 	 * Launch the application.
@@ -51,7 +53,8 @@ public class Principal extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JButton btnUsuarios = new JButton("");
+		btnUsuarios = new JButton("");
+		btnUsuarios.setEnabled(false);
 		btnUsuarios.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Usuarios usuario = new Usuarios();
@@ -82,6 +85,12 @@ public class Principal extends JFrame {
 		contentPane.add(btnClientes);
 		
 		JButton btnOs = new JButton("");
+		btnOs.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Servico servico = new Servico();
+				servico.setVisible(true);
+			}
+		});
 		btnOs.setBounds(38, 202, 128, 128);
 		btnOs.setToolTipText("OS");
 		btnOs.setIcon(new ImageIcon(Principal.class.getResource("/img/os.png")));
@@ -106,5 +115,11 @@ public class Principal extends JFrame {
 		btnSobre.setToolTipText("Sobre");
 		btnSobre.setIcon(new ImageIcon(Principal.class.getResource("/img/about.png")));
 		contentPane.add(btnSobre);
+		
+		btnRelatorios = new JLabel("");
+		btnRelatorios.setEnabled(false);
+		btnRelatorios.setIcon(new ImageIcon(Principal.class.getResource("/img/relatorios.png")));
+		btnRelatorios.setBounds(198, 202, 128, 128);
+		contentPane.add(btnRelatorios);
 	}
 }

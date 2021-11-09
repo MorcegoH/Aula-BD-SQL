@@ -140,9 +140,29 @@ public class Login extends JFrame {
 				pst.setString(2, txtSenha.getText());
 				ResultSet rs = pst.executeQuery();
 			if (rs.next()) {
-				Principal principal = new Principal();
-				principal.setVisible(true);
-				this.dispose();
+				// capturar o perfil do usuário
+				String perfil = rs.getString(5);
+				//System.out.println(perfil);
+				
+				//Tratamento de perfil do usuário >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+				if (perfil.equals("Administrador")) {
+					Principal principal = new Principal();
+					principal.setVisible(true);
+					//liberar os botoes
+					principal.btnRelatorios.setEnabled(true);
+					principal.btnUsuarios.setEnabled(true);
+					this.dispose();
+					
+				} else {
+					Principal principal = new Principal();
+					principal.setVisible(true);
+					//liberar os botoes
+					this.dispose();
+					
+
+				}
+				
+				
 				} else {
 					JOptionPane.showMessageDialog(null, "Login e/ou Senha inválido!!", "Atenção!",
 							JOptionPane.WARNING_MESSAGE);

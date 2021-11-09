@@ -34,6 +34,9 @@ import javax.swing.ImageIcon;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JPasswordField;
+import javax.swing.JCheckBox;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class Usuarios extends JFrame {
 	private JTextField txtUsuario;
@@ -62,9 +65,16 @@ public class Usuarios extends JFrame {
 	 * Create the frame.
 	 */
 	public Usuarios() {
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowActivated(WindowEvent e) {
+				//Evento ativado ao inciar a tela
+				chkSenha.setVisible(false);
+			}
+		});
 		setResizable(false);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Usuarios.class.getResource("/img/pc.png")));
-		setBounds(100, 100, 708, 453);
+		setBounds(100, 100, 708, 470);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(null);
 
@@ -130,17 +140,24 @@ public class Usuarios extends JFrame {
 				adicionarUsuario();
 			}
 		});
-		btnSalvarU.setBounds(62, 302, 64, 64);
+		btnSalvarU.setBounds(62, 345, 64, 64);
 		getContentPane().add(btnSalvarU);
 
 		btnEditarU = new JButton("");
 		btnEditarU.setIcon(new ImageIcon(Usuarios.class.getResource("/img/update.png")));
 		btnEditarU.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				editarUsuario();
+				//tratamento do checkbox
+				if (chkSenha.isSelected()) {
+					editarUsuario();
+				} else {
+					editarUsuarioPersonalizado();
+
+				}
+				
 			}
 		});
-		btnEditarU.setBounds(197, 302, 64, 64);
+		btnEditarU.setBounds(197, 345, 64, 64);
 		getContentPane().add(btnEditarU);
 
 		btnExcluirU = new JButton("");
@@ -150,7 +167,7 @@ public class Usuarios extends JFrame {
 				excluirUsuario();
 			}
 		});
-		btnExcluirU.setBounds(333, 302, 64, 64);
+		btnExcluirU.setBounds(337, 345, 64, 64);
 		getContentPane().add(btnExcluirU);
 
 		JScrollPane scrollPane = new JScrollPane();
@@ -169,6 +186,10 @@ public class Usuarios extends JFrame {
 		txtSenha = new JPasswordField();
 		txtSenha.setBounds(128, 218, 273, 20);
 		getContentPane().add(txtSenha);
+		
+		chkSenha = new JCheckBox("Confirmar Altera\u00E7\u00E3o de Senha");
+		chkSenha.setBounds(180, 245, 221, 23);
+		getContentPane().add(chkSenha);
 
 	}
 	/// FIM DO CONSTRUTOR ?>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -183,6 +204,7 @@ public class Usuarios extends JFrame {
 	private JButton btnSalvarU;
 	private JButton btnEditarU;
 	private JButton btnExcluirU;
+	private JCheckBox chkSenha;
 
 	/**
 	 * Pesquisa de Usuario
@@ -280,6 +302,7 @@ public class Usuarios extends JFrame {
 		btnSalvarU.setEnabled(false);
 		btnEditarU.setEnabled(true);
 		btnExcluirU.setEnabled(true);
+		chkSenha.setVisible(true);
 	}
 
 	// >>>>>>>>>>EDITAR USUARIO
@@ -334,7 +357,62 @@ public class Usuarios extends JFrame {
 			}
 		}
 	}
+	
+	//Segundo editar usuario sem mexer na senha
+	
+	private void editarUsuarioPersonalizado() {
 
+		// validação de campos obrigatorios
+		if (txtUsuario.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Preencha o Nome!", "Atenção!!", JOptionPane.ERROR_MESSAGE);
+			txtUsuario.requestFocus();
+		} else if (txtLogin.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Preencha o Login!", "Atenção!!", JOptionPane.ERROR_MESSAGE);
+			txtLogin.requestFocus();
+		} else if (txtSenha.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Preencha a Senha!", "Atenção!!", JOptionPane.ERROR_MESSAGE);
+			txtSenha.requestFocus();
+		} else if (cboPerfil.getSelectedItem().equals("")) {
+			JOptionPane.showMessageDialog(null, "Selecione o Perfil!", "Atenção!!", JOptionPane.ERROR_MESSAGE);
+			cboPerfil.requestFocus();
+		} else {
+			// Editar os dados do cliente no banco
+			String update = "update usuarios set usuario=?,login=?, perfil=? where id=?";
+
+			try {
+				// Abrir conexão com o banco
+				Connection con = dao.conectar();
+				PreparedStatement pst = con.prepareStatement(update);
+				pst.setString(1, txtUsuario.getText());
+				pst.setString(2, txtLogin.getText());
+				pst.setString(3, cboPerfil.getSelectedItem().toString());
+				pst.setString(4, txtId.getText());
+
+				// Criando uma variavel que irá executar a query e receber o valor 1 em caso
+				// positivo (edição do cliente do banco)
+				int confirma = pst.executeUpdate();
+				if (confirma == 1) {
+					JOptionPane.showMessageDialog(null, "Dados do Usuario Atualizados com Sucesso!!", "Mensagem",
+							JOptionPane.INFORMATION_MESSAGE);
+				}
+				con.close();
+				limpar();
+				// o catch abaixo se refere ao valor duplicado no e-mail(UNIQUE)
+			} catch (java.sql.SQLIntegrityConstraintViolationException ex) {
+				JOptionPane.showMessageDialog(null, "Login já cadastrado!\n Favor escolher outro Login para cadastrar!",
+						"Mensagem", JOptionPane.WARNING_MESSAGE);
+				txtLogin.setText(null);
+				txtLogin.requestFocus();
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+	}
+	
+	
+	// FIm do segundo editar
+	
+	
 	// >>>>>>>>>>>EXCLUIR USUARIO>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 	private void excluirUsuario() {
 		// Confirmação de Exclusão
